@@ -3,7 +3,7 @@
 #include "outputs.h"
 #include "hw_config.h"
 
-volatile uint8_t SPI2_BLOCK;
+volatile uint8_t GL_spi2_block;
 #ifdef _USE_SPI_EEPROM
 #include "eeprom.h"
 #endif /* _USE_SPI_EEPROM */
@@ -43,7 +43,7 @@ uint8_t SPI2_send(uint8_t n_bytes, uint8_t periph, uint32_t txdata_address, uint
 		// GPIO_WriteBit(LED_OE_GPIO_PORT, LED_OE_PIN, Bit_SET);
 		GPIO_WriteBit(LED_LE_GPIO_PORT, LED_LE_PIN, Bit_RESET);
 		GPIO_WriteBit(EEPROM_CS_GPIO_PORT, EEPROM_CS_PIN, Bit_SET);
-		SPI2_BLOCK=SPI_BLOCK_FREE;
+		GL_spi2_block=SPI_BLOCK_FREE;
 		return 1;
 	break;
 	}
@@ -63,7 +63,7 @@ void SPI2_BusInit(void)
 	DMA_InitTypeDef DMA_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	SPI2_BLOCK=SPI_BLOCK_FREE;
+	GL_spi2_block=SPI_BLOCK_FREE;
 
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
@@ -172,7 +172,7 @@ void spi_handleDMA1Ch4Interrupt(void)
 		/* Release Chip Select
 		 *
 		 */
-		switch( SPI2_BLOCK )
+		switch( GL_spi2_block )
 		{
 		case SPI_BLOCK_WRITE_DATA:
 			/* 
@@ -185,16 +185,16 @@ void spi_handleDMA1Ch4Interrupt(void)
 			
 			GPIO_WriteBit(LED_LE_GPIO_PORT, LED_LE_PIN, Bit_RESET);
 			GPIO_WriteBit(LED_OE_GPIO_PORT, LED_OE_PIN, Bit_RESET);
-			SPI2_BLOCK=SPI_BLOCK_FREE;
+			GL_spi2_block=SPI_BLOCK_FREE;
 		break;
 		case SPI_BLOCK_EEPROM_WRITE:
 		case SPI_BLOCK_EEPROM_DATA:
 			/* Release Chip Select of Flash Device */
 			GPIO_WriteBit(EEPROM_CS_GPIO_PORT, EEPROM_CS_PIN, Bit_SET);
-			SPI2_BLOCK=SPI_BLOCK_FREE;
+			GL_spi2_block=SPI_BLOCK_FREE;
 		break;
 		case SPI_BLOCK_EEPROM_COMMAND:
-			 SPI2_BLOCK=SPI_BLOCK_EEPROM_DATA;
+			 GL_spi2_block=SPI_BLOCK_EEPROM_DATA;
 			/*
 			 * Initiate the Flash data transfer
 			 */
@@ -220,7 +220,7 @@ void spi_handleDMA1Ch4Interrupt(void)
 			GPIO_WriteBit(POTI_CS_GPIO_PORT, POTI_CS_PIN, Bit_RESET);
 			GPIO_WriteBit(LED_LE_GPIO_PORT, LED_LE_PIN, Bit_RESET);
 			GPIO_WriteBit(EEPROM_CS_GPIO_PORT, EEPROM_CS_PIN, Bit_SET);
-			SPI2_BLOCK=SPI_BLOCK_FREE;
+			GL_spi2_block=SPI_BLOCK_FREE;
 		break;
 		}
 
@@ -229,6 +229,6 @@ void spi_handleDMA1Ch4Interrupt(void)
 	else
 	{
 		/* Should not get here */
-		SPI2_BLOCK=SPI_BLOCK_FAILURE;
+		GL_spi2_block=SPI_BLOCK_FAILURE;
 	}
 }

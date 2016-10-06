@@ -51,10 +51,10 @@ void eeprom_hardware_init(void)
 uint8_t eeprom_wrdi(void)
 {
 	eeprom_command_buffer[0]=EEPROM_WRDI;
-	while(SPI2_BLOCK != SPI_BLOCK_FREE);
-	SPI2_BLOCK=SPI_BLOCK_EEPROM_WRITE;
+	while(GL_spi2_block != SPI_BLOCK_FREE);
+	GL_spi2_block=SPI_BLOCK_EEPROM_WRITE;
 	SPI2_send(1, SPI_BLOCK_EEPROM_WRITE, (uint32_t)eeprom_command_buffer, (uint32_t)eeprom_command_buffer);
-	while(SPI2_BLOCK != SPI_BLOCK_FREE);
+	while(GL_spi2_block != SPI_BLOCK_FREE);
 	return 0;
 }
 
@@ -65,10 +65,10 @@ uint8_t eeprom_wrdi(void)
 uint8_t eeprom_wren(void)
 {
 	eeprom_command_buffer[0]=EEPROM_WREN;
-	while(SPI2_BLOCK != SPI_BLOCK_FREE);
-	SPI2_BLOCK=SPI_BLOCK_EEPROM_WRITE;
+	while(GL_spi2_block != SPI_BLOCK_FREE);
+	GL_spi2_block=SPI_BLOCK_EEPROM_WRITE;
 	SPI2_send(1, SPI_BLOCK_EEPROM_WRITE, (uint32_t)eeprom_command_buffer, (uint32_t)eeprom_command_buffer);
-	while(SPI2_BLOCK != SPI_BLOCK_FREE);
+	while(GL_spi2_block != SPI_BLOCK_FREE);
 	return 0;
 }
 
@@ -79,10 +79,10 @@ uint8_t eeprom_rdsr(void)
 {
 	eeprom_command_buffer[0]=eeprom_rdsr;
 	eeprom_command_buffer[1]=0x00;
-	while(SPI2_BLOCK != SPI_BLOCK_FREE);
-	SPI2_BLOCK=SPI_BLOCK_EEPROM_WRITE;
+	while(GL_spi2_block != SPI_BLOCK_FREE);
+	GL_spi2_block=SPI_BLOCK_EEPROM_WRITE;
 	SPI2_send(2, SPI_BLOCK_EEPROM_WRITE, (uint32_t)eeprom_command_buffer, (uint32_t)eeprom_command_buffer);
-	while(SPI2_BLOCK != SPI_BLOCK_FREE);
+	while(GL_spi2_block != SPI_BLOCK_FREE);
 	return eeprom_command_buffer[1];
 }
 
@@ -106,8 +106,8 @@ uint8_t eeprom_read(uint32_t address, uint16_t nbytes, uint32_t rxbuffer_address
 	eeprom_command_buffer[2]=((addresspointer[2] * 0x0802LU & 0x22110LU) | (addresspointer[2] * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
 	eeprom_command_buffer[3]=((addresspointer[3] * 0x0802LU & 0x22110LU) | (addresspointer[3] * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
 
-	while(SPI2_BLOCK != SPI_BLOCK_FREE);
-	SPI2_BLOCK = SPI_BLOCK_EEPROM_COMMAND;
+	while(GL_spi2_block != SPI_BLOCK_FREE);
+	GL_spi2_block = SPI_BLOCK_EEPROM_COMMAND;
 	SPI2_send(4, SPI_BLOCK_EEPROM_COMMAND, (uint32_t)eeprom_command_buffer, (uint32_t)rxbuffer_address);
 	return 0;
 }
@@ -144,11 +144,11 @@ uint8_t eeprom_write(uint32_t address, uint32_t txbuffer_address, uint8_t nbytes
 	eeprom_command_buffer[3]=((addresspointer[3] * 0x0802LU & 0x22110LU) | (addresspointer[3] * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
 
 
-	while(SPI2_BLOCK != SPI_BLOCK_FREE);
-	SPI2_BLOCK = SPI_BLOCK_EEPROM_COMMAND;
+	while(GL_spi2_block != SPI_BLOCK_FREE);
+	GL_spi2_block = SPI_BLOCK_EEPROM_COMMAND;
 	SPI2_send(4, SPI_BLOCK_EEPROM_COMMAND, (uint32_t)eeprom_command_buffer, (uint32_t)eeprom_command_buffer);
 	tmpdata=0;
-	while(SPI2_BLOCK != SPI_BLOCK_FREE)
+	while(GL_spi2_block != SPI_BLOCK_FREE)
 	{
 		if(DMA_GetITStatus(DMA1_IT_TC4))
 		{

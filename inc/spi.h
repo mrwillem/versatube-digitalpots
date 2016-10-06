@@ -13,7 +13,7 @@
 
 #define SPI_BLOCK_WRITE_DATA 2
 
-extern volatile uint8_t SPI2_BLOCK;
+extern volatile uint8_t GL_spi2_block;
 
 #ifdef _USE_SPI_EEPROM
 #define SPI_BLOCK_EEPROM_WRITE 4

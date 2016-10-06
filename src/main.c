@@ -108,7 +108,7 @@ int main(void)
 	systemevent=0;
 	uint8_t current_midichannel;
 	current_midichannel=0xFF;
-	SPI2_BLOCK=SPI_BLOCK_FREE;
+	GL_spi2_block=SPI_BLOCK_FREE;
 
 	/* Wait for power good signal */
 	setup_powergood();
